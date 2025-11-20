@@ -182,5 +182,33 @@ def preprocess_data(d, shuffle=False, lhe=False, norm_255=False, mean_norm=False
         d['x_validation'] = d['x_validation'].transpose(0, 3, 1, 2)
         d['x_test'] = d['x_test'].transpose(0, 3, 1, 2)
 
-    # Returning preprocessed data
     return d
+
+def prepare_flattened_data(d, file_name):
+    """
+    Converts images into flattened 1D vectors and saves as new pickle file.
+
+    """
+
+    x_train = d['x_train'].reshape(d['x_train'].shape[0], -1)
+    x_validation = d['x_validation'].reshape(d['x_validation'].shape[0], -1)
+    x_test = d['x_test'].reshape(d['x_test'].shape[0], -1)
+
+    dictionary = {
+        'x_train': x_train,
+        'y_train': d['y_train'],
+        'x_validation': x_validation,
+        'y_validation': d['y_validation'],
+        'x_test': x_test,
+        'y_test': d['y_test'],
+        'labels': d['labels']
+    }
+
+    with open(file_name, 'wb') as f:
+        pickle.dump(dictionary, f)
+
+    print(f"Flattened dataset saved as {file_name}")
+
+with open("data0.pickle", "rb") as f:
+    base_data = pickle.load(f)
+prepare_flattened_data(base_data, "svm_knn_data.pickle")
